@@ -9,28 +9,50 @@ jobs:
   test:
     timeout-minutes: 20
     runs-on: ubuntu-latest
+
     env:
       ORANGEHRM_USERNAME: ${{ secrets.ORANGEHRM_USERNAME }}
       ORANGEHRM_PASSWORD: ${{ secrets.ORANGEHRM_PASSWORD }}
+
     steps:
+      # -----------------------------------------
+      # 1. Checkout repository
+      # -----------------------------------------
       - name: Checkout
         uses: actions/checkout@v4
 
+      # -----------------------------------------
+      # 2. Setup Node.js
+      # -----------------------------------------
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
 
+      # -----------------------------------------
+      # 3. Install dependencies
+      # -----------------------------------------
       - name: Install dependencies
         run: npm install
 
+      # -----------------------------------------
+      # 4. Install Chromium
+      # Use Node directly instead of the
+      # playwright executable wrapper.
+      # -----------------------------------------
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium
+        run: node ./node_modules/@playwright/test/cli.js install --with-deps chromium
 
+      # -----------------------------------------
+      # 5. Run Playwright tests
+      # -----------------------------------------
       - name: Run tests
-        run: npm test
+        run: node ./node_modules/@playwright/test/cli.js test
 
+      # -----------------------------------------
+      # 6. Upload HTML report
+      # -----------------------------------------
       - name: Upload HTML report
         if: always()
         uses: actions/upload-artifact@v4
@@ -39,6 +61,13 @@ jobs:
           path: playwright-report/
           retention-days: 14
 
+      # -----------------------------------------
+      # 7. Upload test artifacts
+      # Includes:
+      # screenshots
+      # videos
+      # traces
+      # -----------------------------------------
       - name: Upload test artifacts
         if: always()
         uses: actions/upload-artifact@v4
