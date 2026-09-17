@@ -1,0 +1,16 @@
+{
+  "name": "orangehrm-qa-automation",
+  "version": "1.0.0",
+  "private": true,
+  "description": "QA automation assessment for OrangeHRM using Playwright and JavaScript",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:debug": "playwright test --debug",
+    "report": "playwright show-report",
+    "test:chromium": "playwright test --project=chromium"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.55.0"
+  }
+}
